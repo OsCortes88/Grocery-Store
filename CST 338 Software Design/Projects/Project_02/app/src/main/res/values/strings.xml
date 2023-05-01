@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Oz Food</string>
+    <string name="mainHeader">Please Log In</string>
+    <string name="mainUsernameHint">Username</string>
+    <string name="mainPasswordHint">Password</string>
+    <string name="mainLogInHint">Log In</string>
+    <string name="mainLogOutHint">Log Out</string>
+    <string name="mainSignUpHint">Sign Up</string>
+    <string name="mainBackHint">Back</string>
+    <string name="mainAddFundsHint">Add Funds</string>
+    <string name="mainViewCartHint">View Cart</string>
+    <string name="mainBuyItemsHint">Purchase Items</string>
+    <string name="mainAdmin">Admin</string>
+    <string name="mainUpdateItemHint">Update Item Info</string>
+    <string name="mainAddNewItemHint">Add Item</string>
+    <string name="mainRemoveItemHint">Remove Item</string>
+    <string name="mainShopHint">Shop</string>
+    <string name="welcome_message">Welcome, </string>
+</resources>
