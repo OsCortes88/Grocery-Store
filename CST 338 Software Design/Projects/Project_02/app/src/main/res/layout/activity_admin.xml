@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/mainUpdateInfoButton"
+        android:id="@+id/mainAddUserButton"
         android:layout_width="276dp"
         android:layout_height="73dp"
         android:layout_marginTop="48dp"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainUpdateInfoButton" />
+        app:layout_constraintTop_toBottomOf="@+id/mainAddUserButton" />
 
     <Button
         android:id="@+id/mainRemoveButton"

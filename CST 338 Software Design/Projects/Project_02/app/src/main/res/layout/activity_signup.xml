@@ -34,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
-        android:id="@+id/mainPasswordEditText"
+        android:id="@+id/signupPasswordEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -54,15 +54,15 @@
         android:layout_marginTop="48dp"
         android:ems="10"
         android:gravity="center"
-        android:hint="@string/mainPasswordHint"
+        android:hint="@string/mainConfirmPassHint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainPasswordEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/signupPasswordEditText" />
 
     <Button
-        android:id="@+id/mainUpdateInfoButton"
+        android:id="@+id/mainAddUserButton"
         android:layout_width="268dp"
         android:layout_height="75dp"
         android:layout_marginTop="56dp"
