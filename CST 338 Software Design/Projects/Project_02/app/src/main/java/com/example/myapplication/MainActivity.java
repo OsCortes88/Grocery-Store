@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        userName = binding.mainUsernameEditText;
-        password = binding.mainPasswordEditText;
+        userName = binding.UserNameEditTest;
+        password = binding.mainPasswordEditText3;
         logIn = binding.mainLogInButton;
         signUp = binding.mainSignUpButton;
 
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mUser = mUserDAO.getUser(userName.getText().toString());
-//                Log.d("TAG", mUser.getUserId() + " " + mUser.getUserName()+ " " + mUser.getIsAdmin() + " " + mUser.getAccountFunds());
-                if(mUser != null && mUser.getUserName().equals(password.getText().toString())) {
+                Log.d("TAG", mUser.getPassword() + " " + password.getText().toString());
+                if(mUser != null && mUser.getPassword().equals(password.getText().toString())) {
                     Intent intent = LogInActivity.intentFactory(getApplicationContext(), mUser.getUserId(), mUser.getUserName(), mUser.getIsAdmin(), mUser.getAccountFunds());
                     startActivity(intent);
                 }

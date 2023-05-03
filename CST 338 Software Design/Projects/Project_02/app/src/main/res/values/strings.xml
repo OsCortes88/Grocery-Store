@@ -16,4 +16,5 @@
     <string name="mainRemoveItemHint">Remove Item</string>
     <string name="mainShopHint">Shop</string>
     <string name="welcome_message">Welcome, </string>
+    <string name="mainConfirmPassHint">Confirm Password</string>
 </resources>
