@@ -75,6 +75,14 @@ public class LogInActivity extends AppCompatActivity {
 
         header.setText(getString(R.string.welcome_message) + " " + userName);
 
+        purchase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddToCartActivity.intentFactory(getApplicationContext());
+                startActivity(intent);
+            }
+        });
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

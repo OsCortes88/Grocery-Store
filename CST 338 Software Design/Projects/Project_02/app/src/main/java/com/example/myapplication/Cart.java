@@ -4,7 +4,7 @@ import androidx.room.Entity;
 
 import com.example.myapplication.DB.AppDataBase;
 
-@Entity(tableName = AppDataBase.USER_TABLE)
+@Entity(tableName = AppDataBase.CART_TABLE)
 public class Cart {
 
     int id;
