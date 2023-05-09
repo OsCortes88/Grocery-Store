@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 mUser = mUserDAO.getUser(userName.getText().toString());
                 Log.d("TAG", mUser.getPassword() + " " + password.getText().toString());
                 if(mUser != null && mUser.getPassword().equals(password.getText().toString())) {
-                    Intent intent = LogInActivity.intentFactory(getApplicationContext(), mUser.getUserId(), mUser.getUserName(), mUser.getIsAdmin(), mUser.getAccountFunds());
+                    Intent intent = LogInActivity.intentFactory(getApplicationContext(), mUser.getUserId());
                     startActivity(intent);
                 }
             }

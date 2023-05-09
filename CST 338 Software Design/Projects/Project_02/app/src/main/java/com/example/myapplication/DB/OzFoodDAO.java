@@ -26,6 +26,8 @@ public interface OzFoodDAO {
     @Query("SELECT * FROM " + AppDataBase.USER_TABLE + " WHERE userName = :userName")
     User getUser(String userName);
 
+    @Query("SELECT * FROM " + AppDataBase.USER_TABLE + " WHERE userId = :userId")
+    User getUserById(int userId);
 
     // ===========================  Item Table  ===============================================
     @Insert
@@ -41,6 +43,8 @@ public interface OzFoodDAO {
     List<String> getItemNames();
     @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE)
     List<Item> getInventory();
+
+
 
 
     // ==========================  Cart Table =========================================

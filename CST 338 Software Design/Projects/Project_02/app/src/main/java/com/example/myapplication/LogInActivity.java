@@ -10,7 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import com.example.myapplication.DB.AppDataBase;
+import com.example.myapplication.DB.OzFoodDAO;
 import com.example.myapplication.databinding.ActivityClientBinding;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
@@ -26,24 +29,22 @@ public class LogInActivity extends AppCompatActivity {
 
     ActivityClientBinding binding;
     int userId;
-    String userName;
-    String password;
-    boolean isAdmin;
-    double funds;
+
+    private User user;
 
     TextView header;
     Button addFunds;
     Button viewCart;
     Button purchase;
     Button admin;
+
     Button logout;
 
-    public static Intent intentFactory(Context packageContext, int id, String userName, boolean isAdmin, double funds) {
+    OzFoodDAO mOzFoodDAO;
+
+    public static Intent intentFactory(Context packageContext, int id) {
         Intent intent = new Intent(packageContext, LogInActivity.class);
         intent.putExtra(USER_ID, id);
-        intent.putExtra(USER_NAME, userName);
-        intent.putExtra(USER_ADMIN, isAdmin);
-        intent.putExtra(USER_FUNDS, funds);
         return intent;
     }
     @SuppressLint("SetTextI18n")
@@ -51,10 +52,15 @@ public class LogInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         
         super.onCreate(savedInstanceState);
-        userId = getIntent().getIntExtra(USER_ID, 0);
-        userName = getIntent().getStringExtra(USER_NAME);
-        isAdmin = getIntent().getBooleanExtra(USER_ADMIN, false);
-        funds = getIntent().getDoubleExtra(USER_FUNDS, 0.0);
+        mOzFoodDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
+                .allowMainThreadQueries()
+                .build()
+                .OzFoodDAO();
+        userId = getIntent().getIntExtra(USER_ID, -1);
+
+        user = mOzFoodDAO.getUserById(userId);
+
+
 
         binding = ActivityClientBinding.inflate((getLayoutInflater()));
         View view = binding.getRoot();
@@ -65,35 +71,61 @@ public class LogInActivity extends AppCompatActivity {
         viewCart = binding.viewCart;
         purchase = binding.purchaseItem;
         admin = binding.adminButton;
-        logout = binding.logOutButton;
+//        logout = binding.logOutButton;
 
-        if(!isAdmin) {
+        if(!user.getIsAdmin()) {
             admin.setVisibility(View.INVISIBLE);
         } else {
             admin.setVisibility(View.VISIBLE);
         }
 
-        header.setText(getString(R.string.welcome_message) + " " + userName);
+        header.setText(getString(R.string.welcome_message) + " " + user.getUserName());
+
+        // Intents to go to next activity when clicked on selected buttons
+        addFunds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddFundsActivity.intentFactory(getApplicationContext(), userId);
+                startActivity(intent);
+            }
+        });
+
+        viewCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = CartActivity.intentFactory(getApplicationContext(), userId);
+                startActivity(intent);
+            }
+        });
 
         purchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = AddToCartActivity.intentFactory(getApplicationContext());
+                Intent intent = AddToCartActivity.intentFactory(getApplicationContext(), userId);
                 startActivity(intent);
             }
         });
 
-        logout.setOnClickListener(new View.OnClickListener() {
+
+        admin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userId = 0;
-                userName = "";
-                isAdmin = false;
-                funds = 0.0;
-                Intent intent = MainActivity.intentFactory(getApplicationContext());
+                Intent intent = AdminActivity.intentFactory(getApplicationContext(), userId);
                 startActivity(intent);
             }
         });
+
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                userId = 0;
+//                userName = "";
+//                isAdmin = false;
+//                funds = 0.0;
+//                Intent intent = MainActivity.intentFactory(getApplicationContext());
+//                startActivity(intent);
+//            }
+//        });
 
     }
 }

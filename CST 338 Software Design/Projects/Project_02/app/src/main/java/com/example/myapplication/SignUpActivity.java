@@ -40,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
         userName = binding.mainUsernameEditText;
         password = binding.mainPasswordEditText2;
         confirm = binding.mainPasswordEditText2;
-        signUp = binding.mainAddUserButton;
+        signUp = binding.mainAddUserBtn;
 
         mUserDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
                 .allowMainThreadQueries()
