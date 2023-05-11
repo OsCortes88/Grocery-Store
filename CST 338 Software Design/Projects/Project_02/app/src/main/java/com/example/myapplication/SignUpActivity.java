@@ -12,7 +12,6 @@ import androidx.room.Room;
 
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
-import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.databinding.ActivitySignupBinding;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -56,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                         User newUser = new User(userName.getText().toString(), password.getText().toString(), false, 0.0);
                         mUserDAO.insert(newUser);
                         // Redirect to log in
-                        Intent intent = MainActivity.intentFactory(getApplicationContext());
+                        Intent intent = LogInActivity.intentFactory(getApplicationContext());
                         startActivity(intent);
                         // TODO: 5/1/2023 Message for success signup 
                     } else {

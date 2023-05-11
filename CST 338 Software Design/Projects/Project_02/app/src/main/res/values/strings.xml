@@ -27,8 +27,11 @@
     <string name="buyItemsHint">Items Menu</string>
     <string name="addToCartHint">Add to Cart</string>
     <string name="cartHeader">Cart</string>
-    <string name="quantityHint">0</string>
+    <string name="quantityHint">1</string>
     <string name="cartTotal">Total: $0.00</string>
     <string name="addItems">Add Item</string>
     <string name="buyHint">Buy</string>
+    <string name="no">No</string>
+    <string name="yes">yes</string>
+    <string name="logout">Logout?</string>
 </resources>

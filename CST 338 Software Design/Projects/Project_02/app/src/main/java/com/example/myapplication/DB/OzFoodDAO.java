@@ -29,6 +29,12 @@ public interface OzFoodDAO {
     @Query("SELECT * FROM " + AppDataBase.USER_TABLE + " WHERE userId = :userId")
     User getUserById(int userId);
 
+    @Query("SELECT * FROM " + AppDataBase.USER_TABLE)
+    List<User> getAllUsers();
+
+    @Query("UPDATE " + AppDataBase.USER_TABLE + " SET accountFunds = :total WHERE userId =:userId")
+    void updateFunds(double total, int userId);
+
     // ===========================  Item Table  ===============================================
     @Insert
     void insert(Item...items);
@@ -41,8 +47,13 @@ public interface OzFoodDAO {
 
     @Query("SELECT itemName FROM " + AppDataBase.ITEM_TABLE)
     List<String> getItemNames();
+
     @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE)
     List<Item> getInventory();
+
+    @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE + " where itemName = :name")
+    Item getItemByName(String name);
+
 
 
 

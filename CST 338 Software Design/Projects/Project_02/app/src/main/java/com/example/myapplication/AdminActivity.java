@@ -12,7 +12,6 @@ import android.widget.Button;
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
 import com.example.myapplication.databinding.ActivityAdminBinding;
-import com.example.myapplication.databinding.ActivityClientBinding;
 
 public class AdminActivity extends AppCompatActivity {
 
@@ -88,7 +87,7 @@ public class AdminActivity extends AppCompatActivity {
         shop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = LogInActivity.intentFactory(getApplicationContext(), userId);
+                Intent intent = MainActivity.intentFactory(getApplicationContext(), userId);
                 startActivity(intent);
             }
         });

@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import com.example.myapplication.Item;
 import com.example.myapplication.User;
 
-@Database(entities = {User.class, Item.class}, version = 3)
+@Database(entities = {User.class, Item.class}, version = 4)
 public abstract class AppDataBase extends RoomDatabase {
 
     public static final String DATABASE_NAME = "OzFood.db";

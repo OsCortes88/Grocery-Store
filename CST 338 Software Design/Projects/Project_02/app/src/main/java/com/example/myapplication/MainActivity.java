@@ -1,95 +1,266 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
-
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+import java.util.List;
+import java.util.prefs.Preferences;
+
 public class MainActivity extends AppCompatActivity {
-    private static boolean firstTimeSetUp = true;
-    ActivityMainBinding binding;
-    EditText userName;
-    EditText password;
-    Button signUp, logIn;
-    OzFoodDAO mUserDAO;
+    private static final String USER_ID_KEY = "com.example.myapplication.userIdKey" ;
+    private static final String PREFERENCES_KEY = "com.example.myapplication.PREFERENCES_KEY";
+    private OzFoodDAO mOzFoodDAO;
+    private int mUserId = -1;
+    private SharedPreferences mPreferences;
+    private User mUser;
+    @NonNull ActivityMainBinding binding;
+    private TextView header;
+    private Button addFunds;
+    private Button viewCart;
+    private Button purchase;
+    private Button admin;
 
-    User mUser;
 
-    public static Intent intentFactory(Context packageContext) {
-        Intent intent = new Intent(packageContext, MainActivity.class);;
+
+    public static Intent intentFactory(Context packageContext, int id) {
+        Intent intent = new Intent(packageContext, MainActivity.class);
+        intent.putExtra(USER_ID_KEY, id);
         return intent;
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Logout:
+                logoutUser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void logoutUser() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+
+        alertBuilder.setMessage(R.string.logout);
+
+        alertBuilder.setPositiveButton(getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        clearUserFromIntent();
+                        clearUserFromPref();
+                        mUserId = -1;
+                        checkForUser();
+
+                    }
+                });
+        alertBuilder.setNegativeButton(getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+        alertBuilder.create().show();
+
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        getDataBase();
+
+        checkForUser();
+
+       // addUserToPreference(mUserId); //do this after logInUser
+
+        logInUser(mUserId);
+        Log.d("PREFERENCE_INT", String.valueOf(mPreferences.getInt(USER_ID_KEY, -1)));
         binding = ActivityMainBinding.inflate((getLayoutInflater()));
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
-        userName = binding.UserNameEditTest;
-        password = binding.mainPasswordEditText3;
-        logIn = binding.mainLogInButton;
-        signUp = binding.mainSignUpButton;
+        header = binding.textView;
+        addFunds = binding.addFunds;
+        viewCart = binding.viewCart;
+        purchase = binding.purchaseItem;
+        admin = binding.adminButton;
 
-        mUserDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
-                .allowMainThreadQueries()
-                .build()
-                .OzFoodDAO();
-        
-        // Set default users
-        User defClient = new User("testuser1", "testuser1", false, 50.00);
-        User defAdmin = new User("admin2", "admin2", true, 100.00);
-        if(mUserDAO.getUser(defClient.getUserName()) == null && mUserDAO.getUser(defAdmin.getUserName()) == null)  {
-            mUserDAO.insert(defClient);
-            mUserDAO.insert(defAdmin);
+        if(!mUser.getIsAdmin()) {
+            admin.setVisibility(View.INVISIBLE);
+        } else {
+            admin.setVisibility(View.VISIBLE);
         }
 
-        // Set default items in the items table
-        if(firstTimeSetUp) {
-            // TODO: 5/2/2023 Make firstTimeSetUp persistant 
-            firstTimeSetUp = false;
-            Item milk = new Item("Milk (1 GAL)", 20, 2.99);
-            Item eggs = new Item("Eggs (12 PK)", 15, 2.50);
-            Item redApple = new Item("Red Apple", 100, 0.5);
-            Item brownies = new Item("Brownies (6 PK)", 30, 5);
-            Item doritos = new Item("Doritos (Salsa Verde)", 25, 2.99);
+        header.setText(getString(R.string.welcome_message) + " " + mUser.getUserName());
 
-            mUserDAO.insert(milk, eggs, redApple, brownies, doritos);
-        }
-
-
-        logIn.setOnClickListener(new View.OnClickListener() {
+        // Intents to go to next activity when clicked on selected buttons
+        addFunds.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUser = mUserDAO.getUser(userName.getText().toString());
-                Log.d("TAG", mUser.getPassword() + " " + password.getText().toString());
-                if(mUser != null && mUser.getPassword().equals(password.getText().toString())) {
-                    Intent intent = LogInActivity.intentFactory(getApplicationContext(), mUser.getUserId());
-                    startActivity(intent);
-                }
-            }
-        });
-
-        signUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = SignUpActivity.intentFactory(getApplicationContext());
+                Intent intent = AddFundsActivity.intentFactory(getApplicationContext(), mUserId);
                 startActivity(intent);
             }
         });
+
+        viewCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = CartActivity.intentFactory(getApplicationContext(), mUserId);
+                startActivity(intent);
+            }
+        });
+
+        purchase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddToCartActivity.intentFactory(getApplicationContext(), mUserId);
+                startActivity(intent);
+            }
+        });
+
+
+        admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AdminActivity.intentFactory(getApplicationContext(), mUserId);
+                startActivity(intent);
+            }
+        });
+
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                userId = 0;
+//                userName = "";
+//                isAdmin = false;
+//                funds = 0.0;
+//                Intent intent = MainActivity.intentFactory(getApplicationContext());
+//                startActivity(intent);
+//            }
+//        });
+
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(mUser != null) {
+            MenuItem item = menu.findItem(R.id.Logout);
+            item.setTitle(mUser.getUserName());
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    private void logInUser(int userId) {
+        mUser = mOzFoodDAO.getUserById(userId);
+        //make sure user exists.
+        if(mUser != null) {
+            addUserToPreference(userId);
+        } else {
+            Log.d("USER", "Don't work");
+        }
+        invalidateOptionsMenu();
+    }
+
+    private void addUserToPreference(int userId) {
+        if(mPreferences == null) {
+            getPrefs();
+        }
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt(USER_ID_KEY, userId);
+        editor.apply();
+
+    }
+
+    private void getDataBase() {
+        mOzFoodDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
+                .allowMainThreadQueries()
+                .build()
+                .OzFoodDAO();
+    }
+
+    private void checkForUser() {
+        // Get user id. if no user id default is -1
+        mUserId = getIntent().getIntExtra(USER_ID_KEY, -1);
+        Log.d("Tag", String.valueOf(mUserId));
+
+        if(mUserId != -1) {
+            Log.d("Tag", "We are in");
+            return;
+        }
+
+        // This part maintains the login after closing app
+        if(mPreferences == null) {
+            getPrefs();
+        }
+
+        mUserId = mPreferences.getInt(USER_ID_KEY, -1);
+
+        Log.d("Check", String.valueOf(mUserId));
+
+        if(mUserId != -1) {
+            return;
+        }
+
+        List<User> users = mOzFoodDAO.getAllUsers();
+
+        if(users.size() <= 0) {
+            User defClient = new User("testuser1", "testuser1", false, 50.00);
+            User defAdmin = new User("admin2", "admin2", true, 100.00);
+            mOzFoodDAO.insert(defClient, defAdmin);
+        }
+
+        //Take us to login if we get here
+        Intent intent = LogInActivity.intentFactory(this);
+        startActivity(intent);
+
+
+    }
+
+    private void getPrefs() {
+        mPreferences = this.getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE);
+    }
+
+    private void clearUserFromIntent() {
+        getIntent().putExtra(USER_ID_KEY, -1);
+    }
+
+    private void clearUserFromPref() {
+        addUserToPreference(-1);
     }
 
 }
