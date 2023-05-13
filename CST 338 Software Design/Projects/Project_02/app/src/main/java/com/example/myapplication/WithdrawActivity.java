@@ -15,43 +15,35 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
-import com.google.android.material.badge.BadgeUtils;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
-public class UpdateItemActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+public class WithdrawActivity extends AppCompatActivity {
     private static final String USER_ID_KEY = "com.example.myapplication.user_record";
 
     private static final String PREFERENCES_KEY = "com.example.myapplication.PREFERENCES_KEY";
     SharedPreferences mPreferences;
     private int mUserId;
 
-    Spinner inventory;
-    List<String> items;
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+    public static double profits = 0;
+
+    TextView profitsField;
+    Button withdrawBtn;
+
+    User mUser;
     OzFoodDAO mOzFoodDAO;
 
-    EditText nameField;
-    EditText priceField;
-    EditText quantityField;
-
-    Button update;
-
-    Item item;
-    private User mUser;
-
     public static Intent intentFactory(Context applicationContext, int userId) {
-        Intent intent = new Intent(applicationContext, UpdateItemActivity.class);
+        Intent intent = new Intent(applicationContext, WithdrawActivity.class);
         intent.putExtra(USER_ID_KEY, userId);
         return intent;
     }
@@ -59,43 +51,32 @@ public class UpdateItemActivity extends AppCompatActivity implements AdapterView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_item);
+        setContentView(R.layout.activity_withdraw);
 
         wireUp();
 
-        update.setOnClickListener(new View.OnClickListener() {
+        profitsField.setText("Profits: $" + df.format(profits));
+
+        withdrawBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(nameField.getText().toString().equals("") || priceField.getText().toString().equals("") || quantityField.getText().toString().equals("")) {
-                    Toast.makeText(getApplicationContext(), "All fields must be filled out", Toast.LENGTH_LONG).show();
+                if(profits > 0) {
+                    mUser.setAccountFunds(mUser.getAccountFunds() + profits);
+                    mOzFoodDAO.update(mUser);
+                    profits = 0;
+                    resetDisplay();
+                    Toast.makeText(getApplicationContext(),"Profits have been added to your account.", Toast.LENGTH_LONG).show();
                 } else {
-                    item.setItemName(nameField.getText().toString());
-                    item.setPrice(Double.parseDouble(priceField.getText().toString()));
-                    item.setItemsInStock(Integer.parseInt(quantityField.getText().toString()));
-                    Item updatedItem = item;
-                    mOzFoodDAO.update(updatedItem);
-                    Toast.makeText(getApplicationContext(), "Item has been successfully updated", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"What will you withdraw. THERE IS NOTHING!!", Toast.LENGTH_LONG).show();
                 }
-
-
             }
         });
     }
 
-    private void putDefaultValues() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(item.getItemName());
-        nameField.setText(sb);
+    private void resetDisplay() {
+        profitsField.setText("Profits: $" + df.format(profits));
 
-        sb.delete(0, sb.length());
-        sb.append(item.getPrice());
-        priceField.setText(sb);
-
-        sb.delete(0, sb.length());
-        sb.append(item.getItemsInStock());
-        quantityField.setText(sb);
     }
-
 
     private void wireUp() {
         mOzFoodDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
@@ -104,73 +85,11 @@ public class UpdateItemActivity extends AppCompatActivity implements AdapterView
                 .OzFoodDAO();
 
         mUserId = getIntent().getIntExtra(USER_ID_KEY, -1);
-
         mUser = mOzFoodDAO.getUserById(mUserId);
 
-        createDropdown();
+        profitsField = findViewById(R.id.currentProfits);
+        withdrawBtn = findViewById(R.id.withdrawBtn);
 
-        nameField = findViewById(R.id.updateItemName);
-        priceField = findViewById(R.id.updateItemPrice);
-        quantityField = findViewById(R.id.updateItemQuantity);
-        update = findViewById(R.id.updateItem);
-
-        mUserId = getIntent().getIntExtra(USER_ID_KEY, -1);
-
-        mUser = mOzFoodDAO.getUserById(mUserId);
-
-    }
-
-
-    private void createDropdown() {
-
-        inventory = findViewById(R.id.currentInventory);
-        inventory.setOnItemSelectedListener(this);
-
-//        https://www.geeksforgeeks.org/spinner-in-android-using-java-with-example/
-        items = mOzFoodDAO.getItemNames();
-        // Create the instance of ArrayAdapter
-        // having the list of courses
-        ArrayAdapter ad
-                = new ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                items);
-
-        // set simple layout resource file
-        // for each item of spinner
-        ad.setDropDownViewResource(
-                android.R.layout
-                        .simple_spinner_dropdown_item);
-
-        // Set the ArrayAdapter (ad) data on the
-        // Spinner which binds data to spinner
-        inventory.setAdapter(ad);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> arg0,
-                               View arg1,
-                               int position,
-                               long id)
-    {
-
-        // make toastof name of course
-        // which is selected in spinner
-        Toast.makeText(getApplicationContext(),
-                        items.get(position),
-                        Toast.LENGTH_LONG)
-                .show();
-
-        item = mOzFoodDAO.getItemByName(items.get(position));
-
-        putDefaultValues();
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> arg0)
-    {
-        // Auto-generated method stub
     }
 
 
@@ -290,4 +209,6 @@ public class UpdateItemActivity extends AppCompatActivity implements AdapterView
         editor.apply();
 
     }
+
+
 }

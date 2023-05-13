@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
@@ -37,7 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(view);
 
         userName = binding.mainUsernameEditText;
-        password = binding.mainPasswordEditText2;
+        password = binding.signupPasswordEditText;
         confirm = binding.mainPasswordEditText2;
         signUp = binding.mainAddUserBtn;
 
@@ -49,23 +51,26 @@ public class SignUpActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
-                if(mUserDAO.getUser(userName.getText().toString()) == null) {
-                    if(password.getText().toString().equals(confirm.getText().toString())) {
-                        User newUser = new User(userName.getText().toString(), password.getText().toString(), false, 0.0);
-                        mUserDAO.insert(newUser);
-                        // Redirect to log in
-                        Intent intent = LogInActivity.intentFactory(getApplicationContext());
-                        startActivity(intent);
-                        // TODO: 5/1/2023 Message for success signup 
-                    } else {
-                        // TODO: 5/1/2023 Toast message for mismatch password 
-                    }
-                } else {
-                    // TODO: 5/1/2023 Toast Message for taken username
+                if (!userName.getText().toString().equals("") && !password.getText().toString().equals("") && !confirm.getText().toString().equals("")) {
+                    if (mUserDAO.getUser(userName.getText().toString()) == null) {
+                        if (password.getText().toString().equals(confirm.getText().toString())) {
+                            User newUser = new User(userName.getText().toString(), password.getText().toString(), false, 0.0);
+                            mUserDAO.insert(newUser);
+                            // Redirect to log in
+                            Intent intent = LogInActivity.intentFactory(getApplicationContext());
+                            Toast.makeText(getApplicationContext(), "Account was successfully created", Toast.LENGTH_LONG).show();
+                            startActivity(intent);
 
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "That username is taken, please enter another", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "All fields must be entered", Toast.LENGTH_LONG).show();
                 }
-                
             }
         });
 

@@ -14,7 +14,7 @@
     <string name="mainUpdateItemHint">Update Item Info</string>
     <string name="mainAddNewItemHint">Add Item</string>
     <string name="mainRemoveItemHint">Remove Item</string>
-    <string name="mainShopHint">Shop</string>
+    <string name="mainWithdrawHint">Profits</string>
     <string name="welcome_message">Welcome, </string>
     <string name="mainConfirmPassHint">Confirm Password</string>
     <string name="PriceHint">Price: $0.00</string>
@@ -34,4 +34,9 @@
     <string name="no">No</string>
     <string name="yes">yes</string>
     <string name="logout">Logout?</string>
+    <string name="emptyCartHint">Your cart is empty</string>
+    <string name="withdrawHeaderHint">Withdraw Profit</string>
+    <string name="withdrawBtnHint">Withdraw</string>
+    <string name="deleteBtnHint">Delete</string>
+    <string name="deleteInstructions">Select an Item from the Dropdown Box Above.</string>
 </resources>

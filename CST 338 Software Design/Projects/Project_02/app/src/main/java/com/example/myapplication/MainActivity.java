@@ -65,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(mUser != null) {
+            MenuItem item = menu.findItem(R.id.Logout);
+            item.setTitle(mUser.getUserName());
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     private void logoutUser() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 
@@ -159,29 +168,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        logout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                userId = 0;
-//                userName = "";
-//                isAdmin = false;
-//                funds = 0.0;
-//                Intent intent = MainActivity.intentFactory(getApplicationContext());
-//                startActivity(intent);
-//            }
-//        });
-
-    }
-
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if(mUser != null) {
-            MenuItem item = menu.findItem(R.id.Logout);
-            item.setTitle(mUser.getUserName());
-        }
-        return super.onPrepareOptionsMenu(menu);
     }
 
 

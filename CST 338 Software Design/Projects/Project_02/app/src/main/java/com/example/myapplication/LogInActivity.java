@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
 import com.example.myapplication.databinding.ActivityLogInBinding;
 import com.example.myapplication.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class LogInActivity extends AppCompatActivity {
     private static boolean firstTimeSetUp = true;
@@ -59,15 +64,18 @@ public class LogInActivity extends AppCompatActivity {
 
 //         Set default items in the items table
         if(firstTimeSetUp) {
-            // TODO: 5/2/2023 Make firstTimeSetUp persistant
             firstTimeSetUp = false;
             Item milk = new Item("Milk (1 GAL)", 20, 2.99);
             Item eggs = new Item("Eggs (12 PK)", 15, 2.50);
             Item redApple = new Item("Red Apple", 100, 0.5);
             Item brownies = new Item("Brownies (6 PK)", 30, 5);
             Item doritos = new Item("Doritos (Salsa Verde)", 25, 2.99);
-
-            mOzFoodDAO.insert(milk, eggs, redApple, brownies, doritos);
+            List<Item> defaultItems = new ArrayList<>(Arrays.asList(milk, eggs, redApple, brownies, doritos));
+            for(Item item : defaultItems) {
+                if(mOzFoodDAO.getItemByName(item.getItemName()) == null) {
+                    mOzFoodDAO.insert(item);
+                }
+            }
         }
 
 
@@ -75,10 +83,16 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mUser = mOzFoodDAO.getUser(userName.getText().toString());
-//                Log.d("TAG", mUser.getPassword() + " " + password.getText().toString());
-                if(mUser != null && mUser.getPassword().equals(password.getText().toString())) {
-                    Intent intent = MainActivity.intentFactory(getApplicationContext(), mUser.getUserId());
-                    startActivity(intent);
+                if(mUser != null) {
+                    if(mUser.getPassword().equals(password.getText().toString())) {
+                        Intent intent = MainActivity.intentFactory(getApplicationContext(), mUser.getUserId());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Username does not exist", Toast.LENGTH_LONG).show();
                 }
             }
         });

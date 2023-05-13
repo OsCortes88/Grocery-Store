@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.myapplication.Cart;
+import com.example.myapplication.CartItem;
 import com.example.myapplication.Item;
 import com.example.myapplication.User;
 
@@ -51,22 +51,34 @@ public interface OzFoodDAO {
     @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE)
     List<Item> getInventory();
 
-    @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE + " where itemName = :name")
+    @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE + " where itemName = :name ")
     Item getItemByName(String name);
 
+    @Query("SELECT * FROM " + AppDataBase.ITEM_TABLE + " where itemId = :id")
+    Item getItemById(int id);
 
 
 
 
     // ==========================  Cart Table =========================================
-//    @Insert
-//    void insert(Cart...carts);
-//
-//    @Update
-//    void update(Cart... carts);
-//
-//    @Delete
-//    void delete(Cart carts);
+    @Insert
+    void insert(CartItem... cartItems);
+
+    @Update
+    void update(CartItem... cartItems);
+
+    @Delete
+    void delete(CartItem cartItem);
+
+//    @Query("SELECT * FROM " + AppDataBase.CART_TABLE + " NATURAL JOIN " + AppDataBase.USER_TABLE + " " + AppDataBase.ITEM_TABLE + " WHERE userId = :userId")
+//    List<CartItem> getItemsInUsersCart(int userId);
+
+    @Query("SELECT * FROM " + AppDataBase.CART_TABLE + " WHERE userId = :userId")
+    List<CartItem> getAllItemsInUsersCart(int userId);
+
+    @Query("SELECT * FROM " + AppDataBase.CART_TABLE + " WHERE userid = :userid AND productId = :productId")
+    CartItem getItemInCart(int userid, int productId);
+
 
 
 }

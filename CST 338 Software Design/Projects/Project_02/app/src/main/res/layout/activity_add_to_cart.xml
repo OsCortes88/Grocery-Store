@@ -21,6 +21,7 @@
 
     <Spinner
         android:id="@+id/spinnerItems"
+        android:background="@drawable/border"
         android:layout_width="361dp"
         android:layout_height="50dp"
         android:layout_marginTop="52dp"
@@ -81,10 +82,11 @@
 
     <Button
         android:id="@+id/addToCart"
-        android:layout_width="151dp"
-        android:layout_height="60dp"
+        android:layout_width="187dp"
+        android:layout_height="62dp"
         android:layout_marginTop="68dp"
         android:text="@string/addToCartHint"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quantity" />

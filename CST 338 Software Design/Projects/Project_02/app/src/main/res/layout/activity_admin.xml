@@ -58,12 +58,12 @@
         app:layout_constraintTop_toBottomOf="@+id/mainAddItemButton" />
 
     <Button
-        android:id="@+id/mainShopButton"
+        android:id="@+id/mainWithdrawButton"
         android:layout_width="268dp"
         android:layout_height="75dp"
         android:layout_marginTop="48dp"
         android:backgroundTint="#3F51B5"
-        android:text="@string/mainShopHint"
+        android:text="@string/mainWithdrawHint"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
