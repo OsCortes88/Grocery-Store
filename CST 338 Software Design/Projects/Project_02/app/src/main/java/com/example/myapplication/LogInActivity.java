@@ -1,99 +1,109 @@
 package com.example.myapplication;
 
-import android.annotation.SuppressLint;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.myapplication.databinding.ActivityClientBinding;
+import com.example.myapplication.DB.AppDataBase;
+import com.example.myapplication.DB.OzFoodDAO;
+import com.example.myapplication.databinding.ActivityLogInBinding;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
-import org.w3c.dom.Text;
-
-import java.util.zip.Inflater;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class LogInActivity extends AppCompatActivity {
-    private static final String USER_ID = "com.example.myapplication_user_record";
-    private static final String USER_NAME= "com.example.myapplication_user_name";
-    private static final String USER_ADMIN = "com.example.myapplication_user_admin";
-    private static final String USER_FUNDS = "com.example.myapplication_user_funds";
+    private static boolean firstTimeSetUp = true;
+    ActivityLogInBinding binding;
+    private EditText userName;
+    private EditText password;
+    private Button signUp, logIn;
+    private OzFoodDAO mOzFoodDAO;
 
-    ActivityClientBinding binding;
-    int userId;
-    String userName;
-    String password;
-    boolean isAdmin;
-    double funds;
+    private User mUser;
 
-    TextView header;
-    Button addFunds;
-    Button viewCart;
-    Button purchase;
-    Button admin;
-    Button logout;
-
-    public static Intent intentFactory(Context packageContext, int id, String userName, boolean isAdmin, double funds) {
-        Intent intent = new Intent(packageContext, LogInActivity.class);
-        intent.putExtra(USER_ID, id);
-        intent.putExtra(USER_NAME, userName);
-        intent.putExtra(USER_ADMIN, isAdmin);
-        intent.putExtra(USER_FUNDS, funds);
+    public static Intent intentFactory(Context packageContext) {
+        Intent intent = new Intent(packageContext, LogInActivity.class);;
         return intent;
     }
-    @SuppressLint("SetTextI18n")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        
         super.onCreate(savedInstanceState);
-        userId = getIntent().getIntExtra(USER_ID, 0);
-        userName = getIntent().getStringExtra(USER_NAME);
-        isAdmin = getIntent().getBooleanExtra(USER_ADMIN, false);
-        funds = getIntent().getDoubleExtra(USER_FUNDS, 0.0);
+        setContentView(R.layout.activity_log_in);
 
-        binding = ActivityClientBinding.inflate((getLayoutInflater()));
+        binding = ActivityLogInBinding.inflate((getLayoutInflater()));
         View view = binding.getRoot();
         setContentView(view);
 
-        header = binding.textView;
-        addFunds = binding.addFunds;
-        viewCart = binding.viewCart;
-        purchase = binding.purchaseItem;
-        admin = binding.adminButton;
-        logout = binding.logOutButton;
+        userName = binding.UserNameEditTest;
+        password = binding.mainPasswordEditText3;
+        logIn = binding.mainLogInButton;
+        signUp = binding.mainSignUpButton;
 
-        if(!isAdmin) {
-            admin.setVisibility(View.INVISIBLE);
-        } else {
-            admin.setVisibility(View.VISIBLE);
+        mOzFoodDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
+                .allowMainThreadQueries()
+                .build()
+                .OzFoodDAO();
+        
+//         Set default users
+        User defClient = new User("testuser1", "testuser1", false, 50.00);
+        User defAdmin = new User("admin2", "admin2", true, 100.00);
+        if(mOzFoodDAO.getUser(defClient.getUserName()) == null && mOzFoodDAO.getUser(defAdmin.getUserName()) == null)  {
+            mOzFoodDAO.insert(defClient);
+            mOzFoodDAO.insert(defAdmin);
         }
 
-        header.setText(getString(R.string.welcome_message) + " " + userName);
+//         Set default items in the items table
+        if(firstTimeSetUp) {
+            firstTimeSetUp = false;
+            Item milk = new Item("Milk (1 GAL)", 20, 2.99);
+            Item eggs = new Item("Eggs (12 PK)", 15, 2.50);
+            Item redApple = new Item("Red Apple", 100, 0.5);
+            Item brownies = new Item("Brownies (6 PK)", 30, 5);
+            Item doritos = new Item("Doritos (Salsa Verde)", 25, 2.99);
+            List<Item> defaultItems = new ArrayList<>(Arrays.asList(milk, eggs, redApple, brownies, doritos));
+            for(Item item : defaultItems) {
+                if(mOzFoodDAO.getItemByName(item.getItemName()) == null) {
+                    mOzFoodDAO.insert(item);
+                }
+            }
+        }
 
-        purchase.setOnClickListener(new View.OnClickListener() {
+
+        logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = AddToCartActivity.intentFactory(getApplicationContext());
-                startActivity(intent);
+                mUser = mOzFoodDAO.getUser(userName.getText().toString());
+                if(mUser != null) {
+                    if(mUser.getPassword().equals(password.getText().toString())) {
+                        Intent intent = MainActivity.intentFactory(getApplicationContext(), mUser.getUserId());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Username does not exist", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
-        logout.setOnClickListener(new View.OnClickListener() {
+        signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userId = 0;
-                userName = "";
-                isAdmin = false;
-                funds = 0.0;
-                Intent intent = MainActivity.intentFactory(getApplicationContext());
+                Intent intent = SignUpActivity.intentFactory(getApplicationContext());
                 startActivity(intent);
             }
         });
-
     }
+
 }

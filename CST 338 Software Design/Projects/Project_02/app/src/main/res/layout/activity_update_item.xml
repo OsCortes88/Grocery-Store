@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UpdateItemActivity">
+
+
+    <TextView
+        android:id="@+id/updateItemHeader"
+        android:layout_width="203dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="76dp"
+        android:gravity="center"
+        android:text="Update Item"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/updateItemName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintStart_toEndOf="@+id/namHint"
+        app:layout_constraintTop_toBottomOf="@+id/currentInventory" />
+
+    <TextView
+        android:id="@+id/quantityHint"
+        android:layout_width="103dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="44dp"
+        android:text="Quantity:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/priceHint" />
+
+    <EditText
+        android:id="@+id/updateItemQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="numberSigned"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.396"
+        app:layout_constraintStart_toEndOf="@+id/quantityHint"
+        app:layout_constraintTop_toBottomOf="@+id/updateItemPrice" />
+
+    <TextView
+        android:id="@+id/namHint"
+        android:layout_width="92dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="48dp"
+        android:text="Name:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentInventory" />
+
+    <EditText
+        android:id="@+id/updateItemPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toEndOf="@+id/priceHint"
+        app:layout_constraintTop_toBottomOf="@+id/updateItemName" />
+
+    <TextView
+        android:id="@+id/priceHint"
+        android:layout_width="92dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="76dp"
+        android:text="Price:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/namHint" />
+
+    <Button
+        android:id="@+id/updateItem"
+        android:layout_width="166dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="436dp"
+        android:text="Update Item"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateItemHeader" />
+
+    <Spinner
+        android:id="@+id/currentInventory"
+        android:layout_width="345dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateItemHeader" />
+</androidx.constraintlayout.widget.ConstraintLayout>

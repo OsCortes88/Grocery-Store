@@ -1,5 +1,10 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,23 +20,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import com.example.myapplication.DB.AppDataBase;
 import com.example.myapplication.DB.OzFoodDAO;
-import com.example.myapplication.databinding.ActivityAddToCartBinding;
-import com.example.myapplication.databinding.ActivityAddToCartBinding;
+import com.google.android.material.badge.BadgeUtils;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
-public class AddToCartActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class UpdateItemActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String USER_ID_KEY = "com.example.myapplication.user_record";
 
@@ -39,39 +36,66 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
     SharedPreferences mPreferences;
     private int mUserId;
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-    ActivityAddToCartBinding binding;
-
     Spinner inventory;
-
-    Button minusBtn;
-
-    Button plusBtn;
-
-    Button addToCart;
-
-    TextView quantityField;
-
-    TextView itemPrice;
-
-    int quantity;
-
-    double totalPrice;
-
-    User mUser;
-
-    Item item;
-
-    double priceForOne;
+    List<String> items;
 
     OzFoodDAO mOzFoodDAO;
 
-    List<String> items;
-    public static Intent intentFactory(Context packageContext, int userId) {
-        Intent intent = new Intent(packageContext, AddToCartActivity.class);
+    EditText nameField;
+    EditText priceField;
+    EditText quantityField;
+
+    Button update;
+
+    Item item;
+    private User mUser;
+
+    public static Intent intentFactory(Context applicationContext, int userId) {
+        Intent intent = new Intent(applicationContext, UpdateItemActivity.class);
         intent.putExtra(USER_ID_KEY, userId);
         return intent;
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_update_item);
+
+        wireUp();
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(nameField.getText().toString().equals("") || priceField.getText().toString().equals("") || quantityField.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "All fields must be filled out", Toast.LENGTH_LONG).show();
+                } else {
+                    item.setItemName(nameField.getText().toString());
+                    item.setPrice(Double.parseDouble(priceField.getText().toString()));
+                    item.setItemsInStock(Integer.parseInt(quantityField.getText().toString()));
+                    Item updatedItem = item;
+                    mOzFoodDAO.update(updatedItem);
+                    Toast.makeText(getApplicationContext(), "Item has been successfully updated", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        });
+    }
+
+    private void putDefaultValues() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(item.getItemName());
+        nameField.setText(sb);
+
+        sb.delete(0, sb.length());
+        sb.append(item.getPrice());
+        priceField.setText(sb);
+
+        sb.delete(0, sb.length());
+        sb.append(item.getItemsInStock());
+        quantityField.setText(sb);
+    }
+
 
     private void wireUp() {
         mOzFoodDAO = Room.databaseBuilder(this, AppDataBase.class, AppDataBase.DATABASE_NAME)
@@ -79,21 +103,27 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
                 .build()
                 .OzFoodDAO();
 
-        mUser = mOzFoodDAO.getUserById(getIntent().getIntExtra(USER_ID_KEY, -1));
+        mUserId = getIntent().getIntExtra(USER_ID_KEY, -1);
+
+        mUser = mOzFoodDAO.getUserById(mUserId);
 
         createDropdown();
 
-        minusBtn = findViewById(R.id.minusBtn);
-        plusBtn = findViewById(R.id.plusBtn);
-        quantityField = findViewById(R.id.quantity);
-        itemPrice = findViewById(R.id.itemPrice);
-        addToCart = findViewById(R.id.addToCart);
+        nameField = findViewById(R.id.updateItemName);
+        priceField = findViewById(R.id.updateItemPrice);
+        quantityField = findViewById(R.id.updateItemQuantity);
+        update = findViewById(R.id.updateItem);
+
+        mUserId = getIntent().getIntExtra(USER_ID_KEY, -1);
+
+        mUser = mOzFoodDAO.getUserById(mUserId);
 
     }
 
+
     private void createDropdown() {
 
-        inventory = findViewById(R.id.spinnerItems);
+        inventory = findViewById(R.id.currentInventory);
         inventory.setOnItemSelectedListener(this);
 
 //        https://www.geeksforgeeks.org/spinner-in-android-using-java-with-example/
@@ -118,68 +148,6 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_to_cart);
-
-        wireUp();
-
-        minusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                decreaseQuantity();
-            }
-        });
-
-        plusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                increaseQuantity();
-            }
-        });
-
-        addToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(item.getItemsInStock() > 0) {
-//                    Item updatedItem = item;
-//                    item.setItemsInStock(item.getItemsInStock()-quantity);
-
-                    CartItem exists = mOzFoodDAO.getItemInCart(mUser.getUserId(), item.getItemId());
-                    if(exists != null) {
-                        CartItem product = exists;
-                        if(quantity != 0) {
-                            product.setQuantity(quantity);
-                            product.setTotalPriceForItem(totalPrice);
-                            mOzFoodDAO.update(product);
-                            Toast.makeText(getApplicationContext(),"Updated quantity for " + mOzFoodDAO.getItemById(product.getProductId()).getItemName(), Toast.LENGTH_LONG).show();
-                        } else {
-                            mOzFoodDAO.delete(product);
-                            Toast.makeText(getApplicationContext(), mOzFoodDAO.getItemById(product.getProductId()).getItemName() + " is no longer in your cart", Toast.LENGTH_LONG).show();
-                        }
-
-                        } else {
-                        CartItem product = new CartItem(mUser.getUserId(), item.getItemId(), item.getItemName(), totalPrice, quantity);
-                        mOzFoodDAO.insert(product);
-                        Toast.makeText(getApplicationContext(),"Item added to cart", Toast.LENGTH_LONG).show();
-                    }
-
-                } else {
-                    Toast.makeText(getApplicationContext(),"Sorry, we are currently out of stock", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
-
-
-
-
-
-    }
-
-    // Performing action when ItemSelected
-    // from spinner, Overriding onItemSelected method
-    @Override
     public void onItemSelected(AdapterView<?> arg0,
                                View arg1,
                                int position,
@@ -194,53 +162,9 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
                 .show();
 
         item = mOzFoodDAO.getItemByName(items.get(position));
-        priceForOne = item.getPrice();
 
-        reset();
+        putDefaultValues();
 
-    }
-
-    private void reset() {
-        quantityField.setText("0");
-        itemPrice.setText("Price: $0.00");
-        totalPrice = 0;
-    }
-
-    private void increaseQuantity() {
-
-        StringBuilder sb = new StringBuilder();
-        quantity = Integer.parseInt(quantityField.getText().toString());
-        if(quantity+1 > item.getItemsInStock()) {
-            Toast.makeText(getApplicationContext(),"Sorry, we don't have enough", Toast.LENGTH_LONG).show();
-            return;
-        }
-        quantity++;
-        sb.append(quantity);
-        quantityField.setText(sb);
-
-        sb.delete(0, sb.length());
-        totalPrice += priceForOne;
-        sb.append("Price: $");
-        sb.append(df.format(totalPrice));
-        itemPrice.setText(sb);
-    }
-
-    private void decreaseQuantity() {
-        StringBuilder sb = new StringBuilder();
-        quantity = Integer.parseInt(quantityField.getText().toString());
-        if(quantity-1 < 0) {
-            Toast.makeText(getApplicationContext(),"That is impossible", Toast.LENGTH_LONG).show();
-            return;
-        }
-        quantity--;
-        sb.append(quantity);
-        quantityField.setText(sb);
-
-        sb.delete(0, sb.length());
-        totalPrice -= priceForOne;
-        sb.append("Price: $");
-        sb.append(df.format(totalPrice));
-        itemPrice.setText(sb);
     }
 
     @Override
@@ -248,6 +172,7 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
     {
         // Auto-generated method stub
     }
+
 
 
     @Override
@@ -365,6 +290,4 @@ public class AddToCartActivity extends AppCompatActivity implements AdapterView.
         editor.apply();
 
     }
-
-
 }

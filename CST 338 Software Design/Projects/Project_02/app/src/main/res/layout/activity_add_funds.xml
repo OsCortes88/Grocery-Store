@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddFundsActivity">
+
+    <TextView
+        android:id="@+id/accountTotal"
+        android:layout_width="364dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="64dp"
+        android:gravity="center"
+        android:text="@string/totalFundsHint"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fundsHeader" />
+
+    <Button
+        android:id="@+id/submitFunds"
+        android:layout_width="180dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="96dp"
+        android:text="@string/addFundsHint"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumberDecimal" />
+
+    <EditText
+        android:id="@+id/editTextNumberDecimal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="84dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountTotal"
+        tools:text="@string/fundValueHint" />
+
+    <TextView
+        android:id="@+id/fundsHeader"
+        android:layout_width="234dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="76dp"
+        android:gravity="center"
+        android:text="@string/fundsHeader"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

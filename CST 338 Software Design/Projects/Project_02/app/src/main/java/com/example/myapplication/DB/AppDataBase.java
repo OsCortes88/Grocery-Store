@@ -7,10 +7,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.example.myapplication.CartItem;
 import com.example.myapplication.Item;
 import com.example.myapplication.User;
 
-@Database(entities = {User.class, Item.class}, version = 2)
+@Database(entities = {User.class, Item.class, CartItem.class}, version = 5)
 public abstract class AppDataBase extends RoomDatabase {
 
     public static final String DATABASE_NAME = "OzFood.db";

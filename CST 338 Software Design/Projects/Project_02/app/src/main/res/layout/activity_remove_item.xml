@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RemoveItemActivity">
+
+    <TextView
+        android:id="@+id/removeHeader"
+        android:layout_width="282dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="76dp"
+        android:gravity="center"
+        android:text="Remove Items"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/listOfItems"
+        android:layout_width="356dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textAlignment="center"
+        android:background="@drawable/border"
+        app:layout_constraintTop_toBottomOf="@+id/removeHeader" />
+
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="163dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="76dp"
+        android:text="@string/deleteBtnHint"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="278dp"
+        android:layout_height="115dp"
+        android:layout_marginTop="88dp"
+        android:gravity="center"
+        android:text="@string/deleteInstructions"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listOfItems" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

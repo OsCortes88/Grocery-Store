@@ -12,7 +12,28 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".WithdrawActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UpdateItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddFundsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RemoveItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LogInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +45,7 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".LogInActivity"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".AddToCartActivity"
